@@ -1,0 +1,21 @@
+stages:
+  - build
+
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  GIT_DEPTH: 1
+
+before_script:
+  - git config --global url."https://${GIT_CI_TOKEN}@partner-gitlab.mioffice.cn/".insteadOf "https://partner-gitlab.mioffice.cn/"
+  - fusion-cli config --access-key ${FDS_AK} --secret-key ${FDS_SK}
+
+.limit: &limit
+  tags:
+    - group-runner
+
+build:
+  image: cr.d.xiaomi.net/athena/athena_x86:2.0
+  stage: build
+  <<: *limit
+  script:
+    - make && make upload-files
